@@ -1,0 +1,63 @@
+---
+title: "Image Template"
+output:
+  html_document:
+    md_extensions: -markdown_in_html_blocks
+  pdf_document: default
+---
+
+Lets generate a bunch of images and save them as 'png' files. 
+
+```{r echo=F, warning=FALSE}
+n <- 48 # number of pngs to create
+       # this will also be used for the number of samples in each plot
+mainDir <- paste0(getwd(), '/figures')
+g <- 0
+dir.create(file.path(mainDir, g))
+for(i in 1:n){
+  
+  x = rnorm(n)
+  y = rnorm(n)
+  png(paste0('figures/',g,'/plot_',i,'.png'))
+  plot(x,y, col='blue', pch=19)
+  dev.off()
+  if(i%%12 == 0 & i != n){
+    g <- g + 1
+    dir.create(file.path(mainDir, g))
+  }
+}
+
+```
+
+
+
+```{r  echo=F ,results='asis' , warning=FALSE}
+
+directories <- list.dirs('figures/', recursive = F, full.names = T)
+
+for(d in 1:length(directories)){
+
+cat('<h1>', paste0('TABLE: ', sub('figures//', '', directories[d])), '</h1> ')
+  
+plots <- list.files(directories[d], pattern="*.png")
+plots <- paste0(directories[d], '/', plots)
+
+
+if(length(plots > 0)){
+# #create an html table with float left/right, whatever....
+  for(i in seq(1,length(plots),4)){
+    cat('<table border="1">    
+    <tr>
+    <td height="250"><img src=',plots[i],' height="200" width="200"/></td>
+    <td height="250"><img src=',plots[i+1],' height="200" width="200"/></td>
+    <td height="250"><img src=',plots[i+2],' height="200" width="200"/></td>
+    <td height="250"><img src=',plots[i+3],' height="200" width="200"/></td>
+    </tr>
+    </table>')
+    }
+
+  }
+}
+
+
+```
